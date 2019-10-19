@@ -1,14 +1,26 @@
+#include <HCSR04.h>
+
+// declaracao dos pinos que serao usados para os sensores de distancia
+int trigFrontal;
+int echoFrontal;
+int trigDireita;
+int echoDireita;
+int trigEsquerda;
+int echoEsquerda;
+
+// declaracao das variaveis para armazenar as distancias
+double distanciaFrontal;
+double distanciaDireita;
+double distanciaEsquerda;
+
+// declaracao dos objetos que serao utilizados para cada sensor
+UltraSonicDistanceSensor sensorFrontal(trigFrontal, echoFrontal);
+UltraSonicDistanceSensor sensorDireita(trigDireita, echoDireita);
+UltraSonicDistanceSensor sensorEsquerda(trigEsquerda, trigDireita);
+
 void setup() {
   // put your setup code here, to run once:
-  // Uma variavel para cada sensor. Serao variaveis globais,
-  // para poderem ser acessadas e escritas pela funcao de ler os sensores
-  // SEGUE_LINHA_1
-  // SEGUE_LINHA_2
-  // SEGUE_LINHA_3
-  // DISTANCIA_FRONTAL
-  // DISTANCIA_LATERAL
-  // MOTOR_1
-  // MOTOR_2
+
 }
 
 void loop() {
@@ -25,4 +37,8 @@ void loop() {
 
 void le_sensores() {
   // Aqui ira ler os dados de cada sensor, e armazenar os mesmos nas variaveis globais
+  // leitura dos sensores de distancia
+  distanciaFrontal = sensorFrontal.measureDistanceCm();
+  distanciaDireita = sensorFrontal.measureDistanceCm();
+  distanciaEsquerda = sensorFrontal.measureDistanceCm();
 }
