@@ -1,8 +1,8 @@
 #include <HCSR04.h>		// Biblioteca para os sensores de distancia
 #include <AFMotor.h>	// Biblioteca para os motores
 
-// declaracao dos pinos que serao usados para os sensores de distancia
-// exemplo: #define "constante" 1
+// Declaracao dos pinos que serao usados para os sensores de distancia
+// Exemplo: #define "constante" 1
 #define trigFrontal
 #define echoFrontal
 #define trigDireita
@@ -10,83 +10,120 @@
 #define trigEsquerda
 #define echoEsquerda
 
-// declaracao dos pinos que serao usados para os motores
-// obs: verificar quais pinos serao utilizados, e quantos serao para cada motor
+// Declaracao dos pinos que serao usados para os motores
+// Obs: verificar quais pinos serao utilizados, e quantos serao para cada motor
 #define pinoMotorEsquerda
 #define pinoMotorDireita
 
-// declaracao dos pinos que serao utlizados para os sensores de linha
-// verificar a possibilidade de utilizar mais sensores
+// Declaracao dos pinos que serao utlizados para os sensores de linha
+// Verificar a possibilidade de utilizar mais sensores
 #define sensorLinha1
 #define sensorLinha2
 #define sensorLinha3
 
-// declaracao dos objetos que serao utilizados para cada sensor
+// Declaracao dos modos de operacao
+#define NA_LINHA 0
+#define FORA_DA_LINHA 1
+
+// Declaracao dos objetos que serao utilizados para cada sensor
 UltraSonicDistanceSensor sensorFrontal(trigFrontal, echoFrontal);
 UltraSonicDistanceSensor sensorDireita(trigDireita, echoDireita);
 UltraSonicDistanceSensor sensorEsquerda(trigEsquerda, trigDireita);
 
-// declaracao dos objetos que serao utilizados para cada motor
+// Declaracao dos objetos que serao utilizados para cada motor
 AF_DCMotor motorDireita(pinoMotorDireita);
 AF_DCMotor motorEsquerda(pinoMotorEsquerda);
 
-// declaracao das variaveis para armazenar as distancias
+// Declaracao das variaveis para armazenar as distancias
 double distanciaFrontal;
 double distanciaDireita;
 double distanciaEsquerda;
 
-// declaracao da variavel utilizada para controlar os sensores de linha
-// obs: -1 >> primeiro sensor na linha. virar para a esquerda
-//       0 >> sensor do meio na linha. nao precisa virar
-//      +1 >> terceiro sensor na linha. virar para a direita
-int sensorLinha;
+// Declaracao do vetor para armazenar as entradas dos sensores de linha
+int* vetorSensoresLinha[3];
+
+// Declaracao da variavel utilizada para controlar os sensores de linha
+// Obs: 0 -> sensor do meio na linha. Nao precisa virar
+//      1 -> primeiro sensor na linha. Virar para a esquerda
+//      2 -> terceiro sensor na linha. Virar para a direita
+//      3 -> nenhum sensor na linha. Reencontrar a linha
+int erroSensorLinha;
+
+// Declaracao da variavel para controlar o modo de operacao
+int mode;
 
 void setup() {
-	// inicializacao dos motores
-	// obs: temos que ver uma velocidade ideal para os motores,
+	// Inicializacao dos motores
+	// Obs: temos que ver uma velocidade ideal para os motores,
 	// e passar como parametro para a funcao setSpeed
 	motorEsquerda.setSpeed(200);
 	motorDireita.setSpeed(200);
-	motorEsquerda.run(RELEASE); // RELEASE >> motor parado
+	motorEsquerda.run(RELEASE); // RELEASE -> motor parado
 	motorDireita.run(RELEASE);
 
-	// inicializacao dos sensores de linha
-	pinMode(sensorLinha1, OUTPUT);
-	pinMode(sensorLinha2, OUTPUT);
-	pinMode(sensorLinha3, OUTPUT);
+	// Inicializacao dos sensores de linha
+	pinMode(sensorLinha1, INPUT);
+	pinMode(sensorLinha2, INPUT);
+	pinMode(sensorLinha3, INPUT);
 }
 
 void loop() {
-	// liga os motores
-	// obs: temes que ver se tem necessidade de fazer alguma verificacao antes de ligar os motores
-	motorDireita.run(FORWARD); // FORWARD >> para frente
+	// Liga os motores
+	// Obs: temes que ver se tem necessidade de fazer alguma verificacao antes de ligar os motores
+	motorDireita.run(FORWARD); // FORWARD -> para frente
 	motorEsquerda.run(FORWARD);
 	// Gera uma interrupcao no processador, para ler os dados dos sensores
+	leSensores();
 	// Com os dados atualizados, atua em cima de cada um
-	// Verifica se o robo esta centralizado na linha
-	// Caso nao esteja, deve voltar para a linha
-	// Caso nao tenha linha, anda um pouco para frente, para ver se nao e uma interrupcao
+	// Verificacao de erros para os sensores de linha
+	erroSensorLinha = analisarSensoresLinha();
+	// Verifica o modo de operacao
+	switch (mode) {
+		case NA_LINHA:
+			continue;
+		case FORA_DA_LINHA:
+			// Caso nao tenha linha, anda um pouco para frente, para ver se nao e uma interrupcao
+			continue;
+	}
 	// Verifica se tem um obstaculo na frente (caixa)
 	// Caso tenha, deve iniciar a rotina para contornar o obstaculo
 	// Verifica se o robo chegou no final do percurso
 }
 
-void le_sensores() {
-	// Aqui ira ler os dados de cada sensor, e armazenar os mesmos nas variaveis globais
-	// leitura dos sensores de distancia
+void leSensores() {
+	// Aqui sera feita a leitura dos dados de cada sensor, e armazenar os mesmos nas variaveis globais
+	// Leitura dos sensores de distancia
 	distanciaFrontal = sensorFrontal.measureDistanceCm();
 	distanciaDireita = sensorFrontal.measureDistanceCm();
 	distanciaEsquerda = sensorFrontal.measureDistanceCm();
 
-	// leitura dos sensores de linha
-	if (digitalRead(sensorLinha1) == LOW && digitalRead(sensorLinha1) == HIGH && digitalRead(sensorLinha1) == LOW) {
-		// o robo esta na linha
-		sensorLinha = 0;
-	} else if (digitalRead(sensorLinha1) == LOW && digitalRead(sensorLinha1) == LOW && digitalRead(sensorLinha1) == HIGH) {
-		// robo esta fora da linha. virar para a esquerda
-		sensorLinha = -1;
-	} else if (digitalRead(sensorLinha1) == HIGH && digitalRead(sensorLinha1) == LOW && digitalRead(sensorLinha1) == LOW) {
-		// robo esta fora da linha. virar para a direita
-		sensorLinha = 1;
+	// Leitura dos sensores de linha
+	vetorSensoresLinha[0] = digitalRead(sensorLinha1);
+	vetorSensoresLinha[1] = digitalRead(sensorLinha2);
+	vetorSensoresLinha[2] = digitalRead(sensorLinha3);
+}
+
+int analisarSensoresLinha() {
+	// Verifica se o robo esta centralizado na linha
+	if (vetorSensoresLinha[0] == LOW && vetorSensoresLinha[1] == HIGH && vetorSensoresLinha[3] == LOW) {
+		// O robo esta na linha
+		mode = NA_LINHA;
+		return 0;
+	} else if (vetorSensoresLinha[0] == HIGH && vetorSensoresLinha[1] == LOW && vetorSensoresLinha[3] == LOW) {
+		// O robo esta fora da linha. Virar para a esquerda
+		mode = NA_LINHA;
+		return 1;
+	} else if (vetorSensoresLinha[0] == LOW && vetorSensoresLinha[1] == LOW && vetorSensoresLinha[3] == HIGH) {
+		// O robo esta fora da linha. Virar para a direita
+		mode = NA_LINHA;
+		return 2;
+	} else if (vetorSensoresLinha[0] == LOW && vetorSensoresLinha[1] == LOW && vetorSensoresLinha[3] == LOW) {
+		// O robo saiu da linha. Reencontrar a linha
+		mode = FORA_DA_LINHA;
+		return 3;
+	} else {
+		// Verificar se pode acontecer outras situacoes,
+		// or exemplo todos em high, mais de um em high.
 	}
 }
+
