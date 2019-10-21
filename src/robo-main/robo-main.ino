@@ -17,8 +17,8 @@ void setup() {
 	// Inicializacao dos motores
 	// Obs: temos que ver uma velocidade ideal para os motores,
 	// e passar como parametro para a funcao setSpeed
-	motorEsquerda.setSpeed(200);
-	motorDireita.setSpeed(200);
+	motorEsquerda.setSpeed(velocidadeInicialEsquerda);
+	motorDireita.setSpeed(velocidadeInicialDireita);
 	motorEsquerda.run(RELEASE); // RELEASE -> motor parado
 	motorDireita.run(RELEASE);
 
@@ -88,3 +88,14 @@ int analisarSensoresLinha() {
 	}
 }
 
+void calcularPID() {
+	P = erro;
+	I = I + erro;
+	D = erro - erroAnterior;
+	valorPID = (Kp * P) + (Ki * I) + (Kd * D);
+	erroAnterior = erro;
+}
+
+void motorPIDcontrol() {
+	// Planejar como sera feito o controle da velocidade em cima do PID
+}

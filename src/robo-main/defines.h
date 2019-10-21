@@ -16,6 +16,10 @@
 #define pinoMotorEsquerda
 #define pinoMotorDireita
 
+// Declaracao das velocidades iniciais dos motores
+#define velocidadeInicialEsquerda
+#define velocidadeInicialDireita
+
 // Declaracao dos pinos que serao utlizados para os sensores de linha
 // Verificar a possibilidade de utilizar mais sensores
 #define sensorLinha1
@@ -48,5 +52,14 @@ int erroSensorLinha;
 // Declaracao da variavel para controlar o modo de operacao
 int mode;
 
-// Declaracao da variavel para controle PID
-double valorPID;
+// Declaracao das variaveis utilizadas para controle PID
+double valorPID = 0;
+double erro = 0;
+double erroAnterior = 0;
+double P = 0;
+double I = 0;
+double D = 0;
+
+// Declaracao das variaveis de controle de velocidade do robo
+int velocidadeMotorEsquerda;
+int velocidadeMotorDireita;
