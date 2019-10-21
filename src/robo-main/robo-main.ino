@@ -15,6 +15,12 @@
 #define pinoMotorEsquerda
 #define pinoMotorDireita
 
+// declaracao dos pinos que serao utlizados para os sensores de linha
+// verificar a possibilidade de utilizar mais sensores
+#define sensorLinha1
+#define sensorLinha2
+#define sensorLinha3
+
 // declaracao dos objetos que serao utilizados para cada sensor
 UltraSonicDistanceSensor sensorFrontal(trigFrontal, echoFrontal);
 UltraSonicDistanceSensor sensorDireita(trigDireita, echoDireita);
@@ -29,6 +35,12 @@ double distanciaFrontal;
 double distanciaDireita;
 double distanciaEsquerda;
 
+// declaracao da variavel utilizada para controlar os sensores de linha
+// obs: -1 >> primeiro sensor na linha. virar para a esquerda
+//       0 >> sensor do meio na linha. nao precisa virar
+//      +1 >> terceiro sensor na linha. virar para a direita
+int sensorLinha;
+
 void setup() {
 	// inicializacao dos motores
 	// obs: temos que ver uma velocidade ideal para os motores,
@@ -37,6 +49,11 @@ void setup() {
 	motorDireita.setSpeed(200);
 	motorEsquerda.run(RELEASE); // RELEASE >> motor parado
 	motorDireita.run(RELEASE);
+
+	// inicializacao dos sensores de linha
+	pinMode(sensorLinha1, OUTPUT);
+	pinMode(sensorLinha2, OUTPUT);
+	pinMode(sensorLinha3, OUTPUT);
 }
 
 void loop() {
@@ -60,4 +77,16 @@ void le_sensores() {
 	distanciaFrontal = sensorFrontal.measureDistanceCm();
 	distanciaDireita = sensorFrontal.measureDistanceCm();
 	distanciaEsquerda = sensorFrontal.measureDistanceCm();
+
+	// leitura dos sensores de linha
+	if (digitalRead(sensorLinha1) == LOW && digitalRead(sensorLinha1) == HIGH && digitalRead(sensorLinha1) == LOW) {
+		// o robo esta na linha
+		sensorLinha = 0;
+	} else if (digitalRead(sensorLinha1) == LOW && digitalRead(sensorLinha1) == LOW && digitalRead(sensorLinha1) == HIGH) {
+		// robo esta fora da linha. virar para a esquerda
+		sensorLinha = -1;
+	} else if (digitalRead(sensorLinha1) == HIGH && digitalRead(sensorLinha1) == LOW && digitalRead(sensorLinha1) == LOW) {
+		// robo esta fora da linha. virar para a direita
+		sensorLinha = 1;
+	}
 }
