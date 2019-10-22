@@ -22,13 +22,19 @@
 
 // Declaracao dos pinos que serao utlizados para os sensores de linha
 // Verificar a possibilidade de utilizar mais sensores
-#define sensorLinha1
-#define sensorLinha2
-#define sensorLinha3
+#define pinoSensorLinha1
+#define pinoSensorLinha2
+#define pinoSensorLinha3
 
 // Declaracao dos modos de operacao
 #define NA_LINHA 0
 #define FORA_DA_LINHA 1
+
+// Declaracao das constantes que serao utilizadas no controle PID
+// Verificar os valores ideais para o funcionamento correto do robo
+#define Kp
+#define Ki
+#define Kd
 
 // --------------------------------------------------
 // DECLARACAO DAS VARIAVEIS
@@ -50,7 +56,7 @@ int* vetorSensoresLinha[3];
 int erroSensorLinha;
 
 // Declaracao da variavel para controlar o modo de operacao
-int mode;
+int modo;
 
 // Declaracao das variaveis utilizadas para controle PID
 double valorPID = 0;
