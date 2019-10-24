@@ -2,33 +2,28 @@
 // DEFINICOES DAS CONSTANTES
 // --------------------------------------------------
 
-// Declaracao dos pinos que serao usados para os sensores de distancia
-// Exemplo: #define "constante" 1
-#define trigFrontal
-#define echoFrontal
-#define trigDireita
-#define echoDireita
-#define trigEsquerda
-#define echoEsquerda
-
 // Declaracao dos pinos que serao usados para os motores
 // Obs: verificar quais pinos serao utilizados, e quantos serao para cada motor
 #define pinoMotorEsquerda
 #define pinoMotorDireita
 
 // Declaracao das velocidades iniciais dos motores
+// Verificar qual e a velocidade ideal
 #define velocidadeInicialEsquerda
 #define velocidadeInicialDireita
 
 // Declaracao dos pinos que serao utlizados para os sensores de linha
-// Verificar a possibilidade de utilizar mais sensores
+// Verificar a possibilidade de utilizar mais sensores, para ter mais 
 #define pinoSensorLinha1
 #define pinoSensorLinha2
 #define pinoSensorLinha3
 
+// Declaracao do pino utilizado para verificar o cubo
+#define pinoFimDeCurso
+
 // Declaracao dos modos de operacao
-#define NA_LINHA 0
-#define FORA_DA_LINHA 1
+#define PERCURSO_IDA 	0
+#define PERCURSO_VOLTA 	1
 
 // Declaracao das constantes que serao utilizadas no controle PID
 // Verificar os valores ideais para o funcionamento correto do robo
@@ -40,13 +35,11 @@
 // DECLARACAO DAS VARIAVEIS
 // --------------------------------------------------
 
-// Declaracao das variaveis para armazenar as distancias
-double distanciaFrontal;
-double distanciaDireita;
-double distanciaEsquerda;
+// Declaracao da flag do fim de curso
+int flagFimDeCurso;
 
 // Declaracao do vetor para armazenar as entradas dos sensores de linha
-int* vetorSensoresLinha[3];
+int* vetorSensores[3];
 
 // Declaracao da variavel utilizada para controlar os sensores de linha
 // Obs: 0 -> sensor do meio na linha. Nao precisa virar
