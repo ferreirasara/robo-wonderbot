@@ -2,7 +2,9 @@
 #include <HCSR04.h>		// Biblioteca para os sensores de distancia
 #include <AFMotor.h>	// Biblioteca para os motores
 
+// --------------------------------------------------
 // INICIALIZACAO DOS OBJETOS
+// --------------------------------------------------
 
 // Declaracao dos objetos que serao utilizados para cada motor
 AF_DCMotor motorDireita(pinoMotorDireita);
@@ -34,10 +36,58 @@ void loop() {
 	leSensores();
 	// Verifica o modo de operacao
 	switch (modo) {
+		case INICIO:
+			while (flagFimDeCurso == LOW) { // Verificar se a chave ativada gera LOW ou HIGH
+				// Enquanto o robo nao recebe o cubo, fica parado esperando
+				motorEsquerda.run(RELEASE);
+				motorDireita.run(RELEASE);
+			}
+			if (flagFimDeCurso == HIGH) {
+				// Quando o robo está com o cubo, pode seguir em frente
+				modo = PERCURSO_IDA;
+				motorEsquerda.run(FORWARD);
+				motorDireita.run(FORWARD);
+			}
 		case PERCURSO_IDA:
-			continue;
+			if (semLinha()) {
+				// Seta os dois motores com a velocidade inicial,
+				// para garantir que o mesmo vai seguir em linha reta
+				motorEsquerda.setSpeed(velocidadeInicialEsquerda);
+				motorDireita.setSpeed(velocidadeInicialDireita);
+				motorEsquerda.run(FORWARD);
+				motorDireita.run(FORWARD);
+				delay(1000); // verificar quanto tempo o robo deve andar para reencontrar a linha
+				break; // Volta para o inicio do laco
+			}
+			analisaSensores(); // Analisa os dados dos sensores para saber se o robo esta na linha
+			calcularPID(); // Faz o calculo do PID para controlar os motores
+			controlePID(); // A partir do calculo PID, ajusta os motores
 		case PERCURSO_VOLTA:
-			continue;
+			if (semLinha()) {
+				// Seta os dois motores com a velocidade inicial,
+				// para garantir que o mesmo vai seguir em linha reta
+				motorEsquerda.setSpeed(velocidadeInicialEsquerda);
+				motorDireita.setSpeed(velocidadeInicialDireita);
+				motorEsquerda.run(FORWARD);
+				motorDireita.run(FORWARD);
+				delay(1000); // verificar quanto tempo o robo deve andar para reencontrar a linha
+				break; // Volta para o inicio do laco
+			}
+			analisaSensores(); // Analisa os dados dos sensores para saber se o robo esta na linha
+			calcularPID(); // Faz o calculo do PID para controlar os motores
+			controlePID(); // A partir do calculo PID, ajusta os motores
+		case FIM:
+			while (flagFimDeCurso == HIGH) { // Verificar se a chave ativada gera LOW ou HIGH
+				// Enquanto o robo ainda esta com o cubo, fica parado esperando
+				motorEsquerda.run(RELEASE);
+				motorDireita.run(RELEASE);
+			}
+			if (flagFimDeCurso == LOW) {
+				// Quando o robo está sem o cubo, pode seguir em frente
+				modo = PERCURSO_VOLTA;
+				motorEsquerda.run(FORWARD);
+				motorDireita.run(FORWARD);
+			}
 	}
 	// Liga os motores
 	motorDireita.run(FORWARD); // FORWARD -> para frente
@@ -56,8 +106,32 @@ void leSensores() {
 	flagFimDeCurso = digitalRead(pinoFimDeCurso);
 }
 
-int analisarSensoresLinha() {
-	
+bool fimPercurso() {
+	if (vetorSensores[0] == HIGH && vetorSensores[1] == HIGH && vetorSensores[2] == HIGH) {
+		// Robo chegou ao final do percurso, precisa devolver o cubo
+		modo = FIM;
+		return true;
+	}
+}
+
+bool semLinha() {
+	if (vetorSensores[0] == LOW && vetorSensores[1] == LOW && vetorSensores[2] == LOW) {
+		// Robo nao identificou a linha, pode ser uma interrupção
+		return true;
+	}
+}
+
+void analisaSensores() {
+	if (vetorSensores[0] == LOW && vetorSensores[1] == HIGH && vetorSensores[2] == LOW) {
+		// Robo na linha
+		erro = 0;
+	} else if (vetorSensores[0] == LOW && vetorSensores[1] == LOW && vetorSensores[2] == HIGH) {
+		// Curva para a direita
+		erro = 1;
+	} else if (vetorSensores[0] == HIGH && vetorSensores[1] == LOW && vetorSensores[2] == LOW) {
+		// Curva para a esquerda
+		erro = -1;
+	}
 }
 
 void calcularPID() {
