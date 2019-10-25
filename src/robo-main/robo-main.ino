@@ -80,9 +80,6 @@ void loop() {
 				motorDireita.run(FORWARD);
 			}
 	}
-	// Liga os motores
-	motorDireita.run(FORWARD); // FORWARD -> para frente
-	motorEsquerda.run(FORWARD);
 }
 
 void leSensores() {
