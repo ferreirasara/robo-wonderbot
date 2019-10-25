@@ -22,10 +22,9 @@
 #define pinoFimDeCurso
 
 // Declaracao dos modos de operacao
-#define INICIO			0
-#define PERCURSO_IDA 	1
-#define PERCURSO_VOLTA 	2
-#define FIM 			3
+#define INICIO		0
+#define PERCURSO 	1
+#define FIM 		2
 
 // Declaracao das constantes que serao utilizadas no controle PID
 // Verificar os valores ideais para o funcionamento correto do robo
