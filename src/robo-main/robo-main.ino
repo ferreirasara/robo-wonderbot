@@ -59,6 +59,11 @@ void loop() {
 				delay(1000); // verificar quanto tempo o robo deve andar para reencontrar a linha
 				break; // Volta para o inicio do laco
 			}
+			if (fimPercurso()) {
+				// Robo chegou ao fim do percurso
+				modo = FIM;
+				break;
+			}
 			analisaSensores(); // Analisa os dados dos sensores para saber se o robo esta na linha
 			calcularPID(); // Faz o calculo do PID para controlar os motores
 			controlePID(); // A partir do calculo PID, ajusta os motores
@@ -72,6 +77,11 @@ void loop() {
 				motorDireita.run(FORWARD);
 				delay(1000); // verificar quanto tempo o robo deve andar para reencontrar a linha
 				break; // Volta para o inicio do laco
+			}
+			if (fimPercurso()) {
+				// Robo chegou ao fim do percurso
+				modo = FIM;
+				break;
 			}
 			analisaSensores(); // Analisa os dados dos sensores para saber se o robo esta na linha
 			calcularPID(); // Faz o calculo do PID para controlar os motores
@@ -109,7 +119,6 @@ void leSensores() {
 bool fimPercurso() {
 	if (vetorSensores[0] == HIGH && vetorSensores[1] == HIGH && vetorSensores[2] == HIGH) {
 		// Robo chegou ao final do percurso, precisa devolver o cubo
-		modo = FIM;
 		return true;
 	}
 }
