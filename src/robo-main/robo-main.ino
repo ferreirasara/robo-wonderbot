@@ -1,5 +1,4 @@
 #include "defines.h" 	// Arquivo header com todas as definicoes de constantes e variaveis
-#include <HCSR04.h>		// Biblioteca para os sensores de distancia
 #include <AFMotor.h>	// Biblioteca para os motores
 
 // --------------------------------------------------
@@ -44,9 +43,10 @@ void loop() {
 			}
 			if (flagFimDeCurso == HIGH) {
 				// Quando o robo está com o cubo, pode seguir em frente
-				modo = PERCURSO_IDA;
+				modo = PERCURSO;
 				motorEsquerda.run(FORWARD);
 				motorDireita.run(FORWARD);
+				delay(1000); // Tempo para o robo sair da linha horizontal
 			}
 		case PERCURSO:
 			if (semLinha()) {
@@ -75,9 +75,10 @@ void loop() {
 			}
 			if (flagFimDeCurso == LOW) {
 				// Quando o robo está sem o cubo, pode seguir em frente
-				modo = PERCURSO_VOLTA;
+				modo = PERCURSO;
 				motorEsquerda.run(FORWARD);
 				motorDireita.run(FORWARD);
+				delay(1000); // Tempo para o robo sair da linha horizontal
 			}
 	}
 }
@@ -110,14 +111,15 @@ bool semLinha() {
 
 void analisaSensores() {
 	if (vetorSensores[0] == LOW && vetorSensores[1] == HIGH && vetorSensores[2] == LOW) {
-		// Robo na linha
-		erro = 0;
-	} else if (vetorSensores[0] == LOW && vetorSensores[1] == LOW && vetorSensores[2] == HIGH) {
-		// Curva para a direita
+		erro = -2;
+	} else if (vetorSensores[0] == LOW && vetorSensores[1] == HIGH && vetorSensores[2] == LOW) {
+		erro = -1;	
+	} else if (vetorSensores[0] == LOW && vetorSensores[1] == HIGH && vetorSensores[2] == LOW) {
+		erro = 0;	
+	} else if (vetorSensores[0] == LOW && vetorSensores[1] == HIGH && vetorSensores[2] == LOW) {
 		erro = 1;
-	} else if (vetorSensores[0] == HIGH && vetorSensores[1] == LOW && vetorSensores[2] == LOW) {
-		// Curva para a esquerda
-		erro = -1;
+	} else if (vetorSensores[0] == LOW && vetorSensores[1] == HIGH && vetorSensores[2] == LOW) {
+		erro = 2;
 	}
 }
 
