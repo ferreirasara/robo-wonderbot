@@ -19,9 +19,31 @@ void setup() {
 
 	// Inicializacao do eletroima
     pinMode(pinoEletroIma, OUTPUT);
+    digitalWrite(pinoEletroIma, LOW);
+
+    // Inicializacao do sensor
+	pinMode(pinoSensor, INPUT);
 }
 
 void loop() {
-    // put your main code here, to run repeatedly:
+    if (pinoSensor == HIGH) { // Verifica se o robo esta parado ao lado do braco
+        // Abaixa o braco para chegar perto do cubo
 
+        // Liga o eletroima
+        digitalWrite(pinoEletroIma, HIGH);
+
+        // Ergue novamente o braco
+
+        // Move o braco para a esquerda (deixar em cima do robo)
+        posicaoServoBase = 180; // Verificar qual sera o angulo
+        servoBase.write(posicaoServoBase)
+
+        // Abaixa o braco
+
+        // Desliga o eletroima
+        digitalWrite(pinoEletroIma, LOW);
+
+        // Ergue novamente o braco
+
+    }
 }
