@@ -6,16 +6,23 @@
 // Serao usados dois pinos para cada motor
 #define pino1MotorEsquerda
 #define pino2MotorEsquerda
+#define pinoVelocidadeMotorEsquerda
 #define pino1MotorDireita
 #define pino2MotorDireita
+#define pinoVelocidadeMotorDireita
 
-// Declaracao dos pinos usados na ponte h
-#define pinoPonteH
+// Declaracao das constantes para diferenciar os motores
+#define motorEsquerda
+#define motorDireita
 
 // Declaracao das velocidades iniciais dos motores
 // Verificar qual e a velocidade ideal
 #define velocidadeInicialEsquerda
 #define velocidadeInicialDireita
+
+// Declaracao das constantes para os sentidos do motor
+#define HORARIO true
+#define ANTIHORARIO false
 
 // Declaracao dos pinos que serao utlizados para os sensores de linha
 // Verificar a possibilidade de utilizar mais sensores, para ter mais 
@@ -55,7 +62,8 @@ int* vetorSensores[3];
 int erroSensorLinha;
 
 // Declaracao da variavel para controlar o modo de operacao
-int modo;
+// Inicializa o robo no modo de inicio, para nao gerar confusao
+int modo = INICIO;
 
 // Declaracao das variaveis utilizadas para controle PID
 double valorPID = 0;

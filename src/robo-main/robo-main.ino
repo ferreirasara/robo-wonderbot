@@ -1,23 +1,13 @@
 #include "defines.h" 	// Arquivo header com todas as definicoes de constantes e variaveis
-#include <AFMotor.h>	// Biblioteca para os motores
-
-// --------------------------------------------------
-// INICIALIZACAO DOS OBJETOS
-// --------------------------------------------------
-
-// Declaracao dos objetos que serao utilizados para cada motor
-// Verificar se sera utilizada a biblioteca, ou o controle vai ser feito manualmente
-// AF_DCMotor motorDireita(pinoMotorDireita);
-// AF_DCMotor motorEsquerda(pinoMotorEsquerda);
 
 void setup() {
-	// Inicializacao dos motores
-	// Obs: temos que ver uma velocidade ideal para os motores,
-	// e passar como parametro para a funcao setSpeed
-	motorEsquerda.setSpeed(velocidadeInicialEsquerda);
-	motorDireita.setSpeed(velocidadeInicialDireita);
-	motorEsquerda.run(RELEASE); // RELEASE -> motor parado
-	motorDireita.run(RELEASE);
+	// Inicializacao dos pinos da ponte h
+	pinMode(pino1MotorDireita, OUTPUT);
+	pinMode(pino2MotorDireita, OUTPUT);
+	pinMode(pino1MotorEsquerda, OUTPUT);
+	pinMode(pino2MotorEsquerda, OUTPUT);
+	pinMode(pinoVelocidadeMotorDireita, OUTPUT);
+	pinMode(pinoVelocidadeMotorEsquerda, OUTPUT);
 
 	// Inicializacao dos sensores de linha
 	pinMode(pinoSensorLinha1, INPUT);
@@ -28,7 +18,6 @@ void setup() {
 	pinMode(pinoFimDeCurso, INPUT);
 
 	// Inicializa o robo no modo de inicio, para nao gerar confusao
-	modo = INICIO;
 }
 
 void loop() {
@@ -39,24 +28,21 @@ void loop() {
 		case INICIO:
 			while (flagFimDeCurso == LOW) { // Verificar se a chave ativada gera LOW ou HIGH
 				// Enquanto o robo nao recebe o cubo, fica parado esperando
-				motorEsquerda.run(RELEASE);
-				motorDireita.run(RELEASE);
+				paraRobo();
 			}
 			if (flagFimDeCurso == HIGH) {
 				// Quando o robo está com o cubo, pode seguir em frente
 				modo = PERCURSO;
-				motorEsquerda.run(FORWARD);
-				motorDireita.run(FORWARD);
+				controlaMotor(motorDireita, velocidadeInicialDireita, HORARIO);
+				controlaMotor(motorEsquerda, velocidadeInicialEsquerda, HORARIO);
 				delay(1000); // Tempo para o robo sair da linha horizontal
 			}
 		case PERCURSO:
 			if (semLinha()) {
 				// Seta os dois motores com a velocidade inicial,
 				// para garantir que o mesmo vai seguir em linha reta
-				motorEsquerda.setSpeed(velocidadeInicialEsquerda);
-				motorDireita.setSpeed(velocidadeInicialDireita);
-				motorEsquerda.run(FORWARD);
-				motorDireita.run(FORWARD);
+				controlaMotor(motorDireita, velocidadeInicialDireita, HORARIO);
+				controlaMotor(motorEsquerda, velocidadeInicialEsquerda, HORARIO);
 				delay(1000); // verificar quanto tempo o robo deve andar para reencontrar a linha
 				break; // Volta para o inicio do laco
 			}
@@ -71,16 +57,34 @@ void loop() {
 		case FIM:
 			while (flagFimDeCurso == HIGH) { // Verificar se a chave ativada gera LOW ou HIGH
 				// Enquanto o robo ainda esta com o cubo, fica parado esperando
-				motorEsquerda.run(RELEASE);
-				motorDireita.run(RELEASE);
+				paraRobo();
 			}
 			if (flagFimDeCurso == LOW) {
 				// Quando o robo está sem o cubo, pode seguir em frente
 				modo = PERCURSO;
-				motorEsquerda.run(FORWARD);
-				motorDireita.run(FORWARD);
+				controlaMotor(motorDireita, velocidadeInicialDireita, HORARIO);
+				controlaMotor(motorEsquerda, velocidadeInicialEsquerda, HORARIO);
 				delay(1000); // Tempo para o robo sair da linha horizontal
 			}
+	}
+}
+
+void paraRobo() {
+	digitalWrite(pino1MotorDireita, HIGH);
+	digitalWrite(pino2MotorDireita, HIGH);
+	digitalWrite(pino1MotorEsquerda, HIGH);
+	digitalWrite(pino2MotorEsquerda, HIGH);
+}
+
+void controlaMotor(int motor, int velocidade, bool sentido) {
+	if (motor == motorDireita) {
+		digitalWrite(pino1MotorDireita, sentido);
+		digitalWrite(pino2MotorDireita, !sentido);
+		analogWrite(pinoVelocidadeMotorDireita, velocidade);
+	} else if (motor == motorEsquerda) {
+		digitalWrite(pino1MotorEsquerda, sentido);
+		digitalWrite(pino2MotorEsquerda, !sentido);
+		analogWrite(pinoVelocidadeMotorEsquerda, velocidade);
 	}
 }
 
@@ -134,4 +138,7 @@ void calcularPID() {
 
 void controlePID() {
 	// Planejar como sera feito o controle da velocidade em cima do PID
+
+	controlaMotor(motorDireita, velocidadeMotorDireita, HORARIO);
+	controlaMotor(motorEsquerda, velocidadeMotorEsquerda, HORARIO);
 }
