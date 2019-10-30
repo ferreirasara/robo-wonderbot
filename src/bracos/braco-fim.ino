@@ -1,13 +1,23 @@
 #include <Servo.h>
 #include "defines.h"
 
-void setup() {
-    // Inicializacao dos servos
-    pinMode(pinoServoBase, OUTPUT);
-    pinMode(pinoServo1, OUTPUT);
-    pinMode(pinoServo2, OUTPUT);
+// Inicializacao dos objetos
+Servo servoBase;
+Servo servo1;
+Servo servo2;
 
-    // Inicializacao do eletroima
+void setup() {
+	// Inicializacao dos servos
+	servoBase.attach(pinoServoBase);
+	servo1.attach(pinoServo1);
+	servo2.attach(pinoServo2);
+
+	// Inicia os servos na posicao 0
+	servoBase.write(0);
+	servo1.write(0);
+	servo2.write(0);
+
+	// Inicializacao do eletroima
     pinMode(pinoEletroIma, OUTPUT);
 }
 

@@ -7,3 +7,8 @@
 
 // Declaracao do pino para o eletroima
 #define pinoEletroIma
+
+// Declaracao das variaveis para a posicao de cada servo
+int posicaoServoBase;
+int posicaoServo1;
+int posicaoServo2;
