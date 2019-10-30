@@ -3,9 +3,14 @@
 // --------------------------------------------------
 
 // Declaracao dos pinos que serao usados para os motores
-// Obs: verificar quais pinos serao utilizados, e quantos serao para cada motor
-#define pinoMotorEsquerda
-#define pinoMotorDireita
+// Serao usados dois pinos para cada motor
+#define pino1MotorEsquerda
+#define pino2MotorEsquerda
+#define pino1MotorDireita
+#define pino2MotorDireita
+
+// Declaracao dos pinos usados na ponte h
+#define pinoPonteH
 
 // Declaracao das velocidades iniciais dos motores
 // Verificar qual e a velocidade ideal

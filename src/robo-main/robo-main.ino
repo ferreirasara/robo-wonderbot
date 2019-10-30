@@ -6,8 +6,9 @@
 // --------------------------------------------------
 
 // Declaracao dos objetos que serao utilizados para cada motor
-AF_DCMotor motorDireita(pinoMotorDireita);
-AF_DCMotor motorEsquerda(pinoMotorEsquerda);
+// Verificar se sera utilizada a biblioteca, ou o controle vai ser feito manualmente
+// AF_DCMotor motorDireita(pinoMotorDireita);
+// AF_DCMotor motorEsquerda(pinoMotorEsquerda);
 
 void setup() {
 	// Inicializacao dos motores
