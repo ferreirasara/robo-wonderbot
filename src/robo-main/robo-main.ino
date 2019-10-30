@@ -16,8 +16,6 @@ void setup() {
 
 	// Inicializacao do fim de curso
 	pinMode(pinoFimDeCurso, INPUT);
-
-	// Inicializa o robo no modo de inicio, para nao gerar confusao
 }
 
 void loop() {
@@ -138,7 +136,9 @@ void calcularPID() {
 
 void controlePID() {
 	// Planejar como sera feito o controle da velocidade em cima do PID
-
+	// Um motor sempre será o inverso do outro.
+	// Ex: um com 100, outro com 155 (a soma deve ser 255, o maximo da saida PWM)
+	// Porcentagem talvez?
 	controlaMotor(motorDireita, velocidadeMotorDireita, HORARIO);
 	controlaMotor(motorEsquerda, velocidadeMotorEsquerda, HORARIO);
 }
