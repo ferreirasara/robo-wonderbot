@@ -113,15 +113,15 @@ bool semLinha() {
 }
 
 void analisaSensores() {
-	if (vetorSensores[0] == LOW && vetorSensores[1] == HIGH && vetorSensores[2] == LOW) {
+	if (vetorSensores[0] == HIGH && vetorSensores[1] == LOW && vetorSensores[2] == LOW) {
 		erro = -2;
-	} else if (vetorSensores[0] == LOW && vetorSensores[1] == HIGH && vetorSensores[2] == LOW) {
+	} else if (vetorSensores[0] == HIGH && vetorSensores[1] == HIGH && vetorSensores[2] == LOW) {
 		erro = -1;	
 	} else if (vetorSensores[0] == LOW && vetorSensores[1] == HIGH && vetorSensores[2] == LOW) {
 		erro = 0;	
-	} else if (vetorSensores[0] == LOW && vetorSensores[1] == HIGH && vetorSensores[2] == LOW) {
+	} else if (vetorSensores[0] == LOW && vetorSensores[1] == HIGH && vetorSensores[2] == HIGH) {
 		erro = 1;
-	} else if (vetorSensores[0] == LOW && vetorSensores[1] == HIGH && vetorSensores[2] == LOW) {
+	} else if (vetorSensores[0] == LOW && vetorSensores[1] == LOW && vetorSensores[2] == HIGH) {
 		erro = 2;
 	}
 }
