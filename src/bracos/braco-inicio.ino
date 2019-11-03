@@ -21,11 +21,12 @@ void setup() {
     pinMode(pinoEletroIma, OUTPUT);
 
 	// Inicializacao do sensor
-	pinMode(pinoSensor, INPUT);
+	pinMode(pinoSensor, INPUT_PULLUP); // Usa PULLUP para nao ter variacao entre 0 e 1
 }
 
 void loop() {
-	if (pinoSensor == HIGH) { // Verifica se o robo esta parado ao lado do braco
+	if (digitalRead(pinoSensor) == LOW) { // Verifica se o robo esta parado ao lado do braco
+        // Nos testes, o sensor manda um sinal LOW quando o objeto esta proximo
         // Abaixa o braco para chegar perto do cubo
 
         // Liga o eletroima

@@ -9,6 +9,7 @@
 #define pinoEletroIma
 
 // Declaracao do pino do sensor, para saber quando o robo esta parado perto do braco
+// Sera um sensor infravermelho
 #define pinoSensor
 
 // Declaracao das variaveis para a posicao de cada servo

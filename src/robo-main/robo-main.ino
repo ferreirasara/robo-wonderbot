@@ -24,11 +24,11 @@ void loop() {
 	// Verifica o modo de operacao
 	switch (modo) {
 		case INICIO:
-			while (flagFimDeCurso == LOW) { // Verificar se a chave ativada gera LOW ou HIGH
+			while (digitalRead(flagFimDeCurso) == LOW) { // Verificar se a chave ativada gera LOW ou HIGH
 				// Enquanto o robo nao recebe o cubo, fica parado esperando
 				paraRobo();
 			}
-			if (flagFimDeCurso == HIGH) {
+			if (digitalRead(flagFimDeCurso) == HIGH) {
 				// Quando o robo está com o cubo, pode seguir em frente
 				modo = PERCURSO;
 				controlaMotor(motorDireita, velocidadeInicialDireita, HORARIO);
@@ -53,11 +53,11 @@ void loop() {
 			calcularPID(); // Faz o calculo do PID para controlar os motores
 			controlePID(); // A partir do calculo PID, ajusta os motores
 		case FIM:
-			while (flagFimDeCurso == HIGH) { // Verificar se a chave ativada gera LOW ou HIGH
+			while (digitalRead(flagFimDeCurso) == HIGH) { // Verificar se a chave ativada gera LOW ou HIGH
 				// Enquanto o robo ainda esta com o cubo, fica parado esperando
 				paraRobo();
 			}
-			if (flagFimDeCurso == LOW) {
+			if (digitalRead(flagFimDeCurso) == LOW) {
 				// Quando o robo está sem o cubo, pode seguir em frente
 				modo = PERCURSO;
 				controlaMotor(motorDireita, velocidadeInicialDireita, HORARIO);
