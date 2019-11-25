@@ -4,21 +4,21 @@
 
 // Declaracao dos pinos que serao usados para os motores
 // Serao usados dois pinos para cada motor
-#define pino1MotorEsquerda
-#define pino2MotorEsquerda
-#define pinoVelocidadeMotorEsquerda
-#define pino1MotorDireita
-#define pino2MotorDireita
-#define pinoVelocidadeMotorDireita
+#define pino1MotorEsquerda 46
+#define pino2MotorEsquerda 48
+#define pinoVelocidadeMotorEsquerda 2
+#define pino1MotorDireita 50
+#define pino2MotorDireita 52
+#define pinoVelocidadeMotorDireita 3
 
 // Declaracao das constantes para diferenciar os motores
-#define motorEsquerda
-#define motorDireita
+#define motorEsquerda 1
+#define motorDireita 2
 
 // Declaracao das velocidades iniciais dos motores
 // Verificar qual e a velocidade ideal
-#define velocidadeInicialEsquerda
-#define velocidadeInicialDireita
+#define velocidadeInicialEsquerda 80
+#define velocidadeInicialDireita 80
 
 // Declaracao das constantes para os sentidos do motor
 #define HORARIO true
@@ -26,12 +26,12 @@
 
 // Declaracao dos pinos que serao utlizados para os sensores de linha
 // Verificar a possibilidade de utilizar mais sensores, para ter mais 
-#define pinoSensorLinha1
-#define pinoSensorLinha2
-#define pinoSensorLinha3
+#define pinoSensorLinha1 40
+#define pinoSensorLinha2 32
+#define pinoSensorLinha3 26
 
 // Declaracao do pino utilizado para verificar o cubo
-#define pinoFimDeCurso
+#define pinoCubo
 
 // Declaracao dos modos de operacao
 #define INICIO		0
@@ -47,9 +47,6 @@
 // --------------------------------------------------
 // DECLARACAO DAS VARIAVEIS
 // --------------------------------------------------
-
-// Declaracao da flag do fim de curso
-int flagFimDeCurso;
 
 // Declaracao do vetor para armazenar as entradas dos sensores de linha
 int* vetorSensores[3];

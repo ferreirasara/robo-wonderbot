@@ -18,41 +18,54 @@ void setup() {
 	servo2.write(0);
 
 	// Inicializacao do eletroima
-    pinMode(pinoEletroIma, OUTPUT);
-    digitalWrite(pinoEletroIma, LOW);
+	pinMode(pinoEletroIma, OUTPUT);
+	digitalWrite(pinoEletroIma, LOW);
 
-    // Inicializacao do sensor
+	// Inicializacao do sensor
 	pinMode(pinoSensor, INPUT);
 }
 
 void loop() {
-    if (digitalRead(pinoSensor) == LOW) { // Verifica se o robo esta parado ao lado do braco
-        // Nos testes, o sensor manda um sinal LOW quando o objeto esta proximo
-        // OBS: Precisa ajustar a "sensibilidade" do sensor, de modo que detecte somente o robo
-        // Abaixa o braco para chegar perto do cubo
-        posicaoServo1 = 0; // Verificar qual sera o angulo
-        servoBase.write(posicaoServoBase);
-
-        // Liga o eletroima
-        digitalWrite(pinoEletroIma, HIGH);
-
-        // Ergue novamente o braco
-        posicaoServo1 = 0; // Verificar qual sera o angulo
-        servoBase.write(posicaoServoBase);
-
-        // Move o braco para a esquerda (deixar em cima do robo)
-        posicaoServoBase = 0; // Verificar qual sera o angulo
-        servoBase.write(posicaoServoBase);
-
-        // Abaixa o braco
-        posicaoServo1 = 0; // Verificar qual sera o angulo
-        servoBase.write(posicaoServoBase);
-
-        // Desliga o eletroima
-        digitalWrite(pinoEletroIma, LOW);
-
-        // Ergue novamente o braco
-        posicaoServo1 = 0; // Verificar qual sera o angulo
-        servoBase.write(posicaoServoBase);
+  int i;
+//	if (digitalRead(pinoSensor) == LOW) { // Verifica se o robo esta parado ao lado do braco
+   if (true) {
+		// Nos testes, o sensor manda um sinal LOW quando o objeto esta proximo
+		// OBS: Precisa ajustar a "sensibilidade" do sensor, de modo que detecte somente o robo
+		// Abaixa o braco para chegar perto do cubo
+//		for (i = 300; i > 0; --i) {
+//			servo1.write(i);
+//			delay(10);
+//		}
+    while(true) {
+      servo1.write(90);
     }
+		// Liga o eletroima
+		//digitalWrite(pinoEletroIma, HIGH);
+
+		// Ergue novamente o braco
+		for (i = 0; i < 90; ++i) {
+			//servo1.write(i);
+			//delay(10);
+		}
+
+		// Move o braco para a esquerda (deixar em cima do robo)
+		for (i = 0; i < 300; ++i) {
+			servoBase.write(i);
+			delay(10);
+		}
+
+		// Abaixa o braco
+		for (i = 90; i > 0; --i) {
+			//servo1.write(i);
+			//delay(10);
+		}
+		// Desliga o eletroima
+		//digitalWrite(pinoEletroIma, LOW);
+
+		// Ergue novamente o braco
+		for (i = 0; i < 90; ++i) {
+			//servo1.write(i);
+			//delay(10);
+		}
+	}
 }
