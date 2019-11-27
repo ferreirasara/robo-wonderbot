@@ -15,7 +15,14 @@ void setup() {
 	pinMode(pinoSensorLinha3, INPUT);
 
 	// Inicializacao do fim de curso
-	//pinMode(pinoCubo, INPUT);
+	pinMode(pinoCubo, INPUT);
+
+	// Definindo o pino "trigger" como saída
+	pinMode(trigger, OUTPUT);
+	// Definindo o pino "echo" como entrada
+	pinMode(echo, INPUT);
+	// "Limpar" o pino trigger
+	digitalWrite (trigger, LOW);
 }
 
 void loop() {
@@ -24,14 +31,13 @@ void loop() {
 	// Verifica o modo de operacao
 	switch (modo) {
 		case INICIO:
-//			while (digitalRead(pinoCubo) == LOW) { // Verificar se a chave ativada gera LOW ou HIGH
-//				// Enquanto o robo nao recebe o cubo, fica parado esperando
-//				paraRobo();
-//       delay(1000);
-//       break;
-//			}
-			//if (digitalRead(pinoCubo) == HIGH) {
-      if (true) {
+			while (digitalRead(pinoCubo) == LOW) { // Verificar se a chave ativada gera LOW ou HIGH
+				// Enquanto o robo nao recebe o cubo, fica parado esperando
+				paraRobo();
+				delay(1000);
+				break;
+			}
+			if (digitalRead(pinoCubo) == HIGH) {
 				// Quando o robo está com o cubo, pode seguir em frente
 				modo = PERCURSO;
 				controlaMotor(motorDireita, velocidadeInicialDireita, HORARIO);
@@ -53,20 +59,28 @@ void loop() {
 				break;
 			}
 			analisaSensores(); // Analisa os dados dos sensores para saber se o robo esta na linha
+			while (distancia <= 15) {
+				paraRobo();
+				delay(1000);
+				leSensores();
+				if (distancia > 15) {
+					break;
+				}
+			}
 			calcularPID(); // Faz o calculo do PID para controlar os motores
 			controlePID(); // A partir do calculo PID, ajusta os motores
 		case FIM:
-//			while (digitalRead(pinoCubo) == HIGH) { // Verificar se a chave ativada gera LOW ou HIGH
-//				// Enquanto o robo ainda esta com o cubo, fica parado esperando
-//				paraRobo();
-//			}
-//			if (digitalRead(pinoCubo) == LOW) {
-//				// Quando o robo está sem o cubo, pode seguir em frente
-//				modo = PERCURSO;
-//				controlaMotor(motorDireita, velocidadeInicialDireita, HORARIO);
-//				controlaMotor(motorEsquerda, velocidadeInicialEsquerda, HORARIO);
-//				delay(1000); // Tempo para o robo sair da linha horizontal
-//			}
+			while (digitalRead(pinoCubo) == HIGH) { // Verificar se a chave ativada gera LOW ou HIGH
+				// Enquanto o robo ainda esta com o cubo, fica parado esperando
+				paraRobo();
+			}
+			if (digitalRead(pinoCubo) == LOW) {
+				// Quando o robo está sem o cubo, pode seguir em frente
+				modo = PERCURSO;
+				controlaMotor(motorDireita, velocidadeInicialDireita, HORARIO);
+				controlaMotor(motorEsquerda, velocidadeInicialEsquerda, HORARIO);
+				delay(1000); // Tempo para o robo sair da linha horizontal
+			}
       break;
 	}
 }
@@ -99,7 +113,18 @@ void leSensores() {
 	vetorSensores[2] = digitalRead(pinoSensorLinha3);
 
 	// Leitura do cubo
-//	flagFimDeCurso = digitalRead(pinoFimDeCurso);
+	flagFimDeCurso = digitalRead(pinoFimDeCurso);
+
+	// Transmitindo o sinal do trigger, ligando-o
+	digitalWrite(trigger, HIGH);
+	// Tempo de transmissão de sinal (trigger ligado)
+	delayMicroseconds(10);
+	// Desligando o trigger
+	digitalWrite(trigger, LOW);
+	// Conta o tempo do pino "echo" ligado(HIGH) e armazena na variável "tempo"
+	tempo = pulseIn(echo, HIGH);
+	// Formula para calcular a distancia (em cm)
+	distancia = (tempo * 0.034) / 2;
 }
 
 bool fimPercurso() {
@@ -131,11 +156,11 @@ void analisaSensores() {
 }
 
 void calcularPID() {
-//	P = erro;
-//	I = I + erro;
-//	D = erro - erroAnterior;
-//	valorPID = (Kp * P) + (Ki * I) + (Kd * D);
-//	erroAnterior = erro;
+	P = erro;
+	I = I + erro;
+	D = erro - erroAnterior;
+	valorPID = (Kp * P) + (Ki * I) + (Kd * D);
+	erroAnterior = erro;
 }
 
 void controlePID() {

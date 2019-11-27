@@ -3,7 +3,7 @@
 // --------------------------------------------------
 
 // Declaracao dos pinos que serao usados para os motores
-// Serao usados dois pinos para cada motor
+// Serao usados tres pinos para cada motor
 #define pino1MotorEsquerda 46
 #define pino2MotorEsquerda 48
 #define pinoVelocidadeMotorEsquerda 2
@@ -32,6 +32,10 @@
 
 // Declaracao do pino utilizado para verificar o cubo
 #define pinoCubo
+
+// Declaracao dos pinos utilizados para o sensor ultrassonico
+#define trigger
+#define echo
 
 // Declaracao dos modos de operacao
 #define INICIO		0
@@ -73,3 +77,7 @@ double D = 0;
 // Declaracao das variaveis de controle de velocidade do robo
 int velocidadeMotorEsquerda;
 int velocidadeMotorDireita;
+
+// Declaracao das variaveis para controle do sensor ultrassonico
+long tempo;
+double distancia;
