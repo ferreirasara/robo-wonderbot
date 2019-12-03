@@ -27,45 +27,49 @@ void setup() {
 
 void loop() {
   int i;
-//	if (digitalRead(pinoSensor) == LOW) { // Verifica se o robo esta parado ao lado do braco
-   if (true) {
+   if (digitalRead(pinoSensor) == LOW) {
 		// Nos testes, o sensor manda um sinal LOW quando o objeto esta proximo
 		// OBS: Precisa ajustar a "sensibilidade" do sensor, de modo que detecte somente o robo
 		// Abaixa o braco para chegar perto do cubo
-//		for (i = 300; i > 0; --i) {
-//			servo1.write(i);
-//			delay(10);
-//		}
-    while(true) {
-      servo1.write(90);
-    }
+		for (i = 300; i > 0; --i) {
+			servo1.write(i);
+			delay(10);
+		}
+		delay(100);
+
 		// Liga o eletroima
-		//digitalWrite(pinoEletroIma, HIGH);
+		digitalWrite(pinoEletroIma, HIGH);
+		delay(10);
 
 		// Ergue novamente o braco
 		for (i = 0; i < 90; ++i) {
-			//servo1.write(i);
-			//delay(10);
+			servo1.write(i);
+			delay(10);
 		}
+		delay(100);
 
 		// Move o braco para a esquerda (deixar em cima do robo)
 		for (i = 0; i < 300; ++i) {
 			servoBase.write(i);
 			delay(10);
 		}
+		delay(100);
 
 		// Abaixa o braco
 		for (i = 90; i > 0; --i) {
-			//servo1.write(i);
-			//delay(10);
+			servo1.write(i);
+			delay(10);
 		}
+		delay(100);
+
 		// Desliga o eletroima
-		//digitalWrite(pinoEletroIma, LOW);
+		digitalWrite(pinoEletroIma, LOW);
 
 		// Ergue novamente o braco
 		for (i = 0; i < 90; ++i) {
-			//servo1.write(i);
-			//delay(10);
+			servo1.write(i);
+			delay(10);
 		}
+		delay(100);
 	}
 }

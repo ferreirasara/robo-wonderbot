@@ -100,6 +100,7 @@ void movimentaRobo() {
 	digitalWrite(pino2MotorDireita, LOW);
 	digitalWrite(pino1MotorEsquerda, HIGH);
 	digitalWrite(pino2MotorEsquerda, LOW);
+	
 	// Ajusta a velocidade para voltar a velocidade inicial
 	analogWrite(pinoVelocidadeMotorDireita, velocidadeInicialDireita);
 	delay(10);
@@ -150,27 +151,22 @@ void calcularPID() {
 	D = erro - erroAnterior;
 	valorPID = (Kp * P) + (Ki * I) + (Kd * D);
 	erroAnterior = erro;
-	float porcentagem = 
-	if (erro > 0) {
-		velocidadeMotorDireita = valorPID;
-		velocidadeMotorEsquerda = ;
-	} else if (erro < 0) {
-		velocidadeMotorDireita = ;
-		velocidadeMotorEsquerda = ;
-	}
 }
 
 void controlePID() {
 	// Um motor sempre será o inverso do outro.
 	// Ex: um com 100, outro com 155 (a soma deve ser 255, o maximo da saida PWM)
+	// Calcula a porcentagem para alteração na velocidade
+	float porcentagem = valorPID / 255;
+	float porcentagemInverso = 100 - porcentagem;
 	if (erro < 0) {
-		analogWrite(pinoVelocidadeMotorEsquerda, 200);
-		analogWrite(pinoVelocidadeMotorDireita, 150);
+		velocidadeMotorDireita = 255 * porcentagem;
+		velocidadeMotorEsquerda = 255 * porcentagemInverso;
 	} else if (erro > 0) {
-		analogWrite(pinoVelocidadeMotorEsquerda, 150);
-		analogWrite(pinoVelocidadeMotorDireita, 200);
+		velocidadeMotorEsquerda = 255 * porcentagem;
+		velocidadeMotorDireita = 255 * porcentagemInverso;
 	} else {
-		analogWrite(pinoVelocidadeMotorEsquerda, 150);
-		analogWrite(pinoVelocidadeMotorDireita, 150);
+		// Se o erro é 0, o robo esta na linha e pode andar reto
+		movimentaRobo();
 	}
 }
