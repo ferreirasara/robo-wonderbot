@@ -23,11 +23,11 @@
 #define pinoSensorLinha3 51
 
 // Declaracao do pino utilizado para verificar o cubo
-#define pinoCubo 9
+#define pinoCubo 41
 
 // Declaracao dos pinos utilizados para o sensor ultrassonico
-#define trigger 6
-#define echo 7
+#define trigger 33
+#define echo 31
 
 // Declaracao dos modos de operacao
 #define INICIO		0
@@ -51,7 +51,7 @@ int cubo;
 
 // Declaracao da variavel para controlar o modo de operacao
 // Inicializa o robo no modo de inicio, para nao gerar confusao
-int modo = PERCURSO;
+int modo = INICIO;
 
 // Declaracao das variaveis utilizadas para controle PID
 float valorPID = 0;

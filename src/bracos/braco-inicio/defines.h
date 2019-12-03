@@ -1,13 +1,17 @@
 // Declaracao do pino que controlara o servo da base do braco
-#define pinoServoBase 9
+#define pinoServoBase 3
 
 // Declaracao dos pinos dos outros pinoServoBase
-#define pinoServo1 10
-#define pinoServo2 11
+#define pinoServo2 6
+#define pinoServo1 9
 
 // Declaracao do pino para o eletroima
 #define pinoEletroIma 13
 
 // Declaracao do pino do sensor, para saber quando o robo esta parado perto do braco
 // Sera um sensor infravermelho
-#define pinoSensor 12
+#define pinoSensor 11
+
+// Declaracao das variaveis
+int i;
+int sensorInfravermelho;

@@ -12,22 +12,23 @@ void setup() {
 	servo1.attach(pinoServo1);
 	servo2.attach(pinoServo2);
 
-	// Inicia os servos na posicao 0 (posicao inicial)
-	servoBase.write(0);
-	servo1.write(0);
-	servo2.write(0);
-
 	// Inicializacao do eletroima
 	pinMode(pinoEletroIma, OUTPUT);
-	digitalWrite(pinoEletroIma, LOW);
 
 	// Inicializacao do sensor
 	pinMode(pinoSensor, INPUT);
 }
 
 void loop() {
-  int i;
-   if (digitalRead(pinoSensor) == LOW) {
+  // Inicia os servos na posicao 0 (posicao inicial)
+  digitalWrite(pinoEletroIma, LOW);
+  servoBase.write(0);
+  servo1.write(0);
+  servo2.write(0);
+  delay(500);
+    leInfravermelho();
+    delay(10);
+   if (sensorInfravermelho == LOW) {
 		// Nos testes, o sensor manda um sinal LOW quando o objeto esta proximo
 		// OBS: Precisa ajustar a "sensibilidade" do sensor, de modo que detecte somente o robo
 		// Abaixa o braco para chegar perto do cubo
@@ -35,7 +36,7 @@ void loop() {
 			servo1.write(i);
 			delay(10);
 		}
-		delay(100);
+		delay(500);
 
 		// Liga o eletroima
 		digitalWrite(pinoEletroIma, HIGH);
@@ -43,33 +44,38 @@ void loop() {
 
 		// Ergue novamente o braco
 		for (i = 0; i < 90; ++i) {
-			servo1.write(i);
+			servo2.write(i);
 			delay(10);
 		}
-		delay(100);
+		delay(500);
 
 		// Move o braco para a esquerda (deixar em cima do robo)
 		for (i = 0; i < 300; ++i) {
 			servoBase.write(i);
 			delay(10);
 		}
-		delay(100);
+		delay(500);
 
 		// Abaixa o braco
 		for (i = 90; i > 0; --i) {
-			servo1.write(i);
+			servo2.write(i);
 			delay(10);
 		}
-		delay(100);
+		delay(500);
 
 		// Desliga o eletroima
 		digitalWrite(pinoEletroIma, LOW);
 
 		// Ergue novamente o braco
 		for (i = 0; i < 90; ++i) {
-			servo1.write(i);
+			servo2.write(i);
 			delay(10);
 		}
 		delay(100);
 	}
+}
+
+void leInfravermelho() {
+  sensorInfravermelho = digitalRead(pinoSensor);
+  delay(500);
 }
