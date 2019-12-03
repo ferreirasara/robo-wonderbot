@@ -22,7 +22,12 @@ void setup() {
 	// Definindo o pino "echo" como entrada
 	pinMode(echo, INPUT);
 	// "Limpar" o pino trigger
-	digitalWrite (trigger, LOW);
+	digitalWrite(trigger, LOW);
+
+  digitalWrite(pino1MotorDireita, HIGH);
+  digitalWrite(pino2MotorDireita, LOW);
+  digitalWrite(pino1MotorEsquerda, HIGH);
+  digitalWrite(pino2MotorEsquerda, LOW);
 }
 
 void loop() {
@@ -34,40 +39,43 @@ void loop() {
 			while (digitalRead(pinoCubo) == LOW) { // Verificar se a chave ativada gera LOW ou HIGH
 				// Enquanto o robo nao recebe o cubo, fica parado esperando
 				paraRobo();
-				delay(1000);
-				break;
+				delay(500);
 			}
 			if (digitalRead(pinoCubo) == HIGH) {
 				// Quando o robo está com o cubo, pode seguir em frente
 				modo = PERCURSO;
-				controlaMotor(motorDireita, velocidadeInicialDireita, HORARIO);
-				controlaMotor(motorEsquerda, velocidadeInicialEsquerda, HORARIO);
+        analogWrite(pinoVelocidadeMotorDireita, velocidadeInicialDireita);
+        analogWrite(pinoVelocidadeMotorEsquerda, velocidadeInicialEsquerda);
 				delay(1000); // Tempo para o robo sair da linha horizontal
 			}
 		case PERCURSO:
-			if (semLinha()) {
+      // Gera uma interrupcao no processador, para ler os dados dos sensores
+      leSensores();
+			if (vetorSensores[0] == LOW && vetorSensores[1] == LOW && vetorSensores[2] == LOW) {
 				// Seta os dois motores com a velocidade inicial,
 				// para garantir que o mesmo vai seguir em linha reta
-				controlaMotor(motorDireita, velocidadeInicialDireita, HORARIO);
-				controlaMotor(motorEsquerda, velocidadeInicialEsquerda, HORARIO);
+				analogWrite(pinoVelocidadeMotorDireita, velocidadeInicialDireita);
+        analogWrite(pinoVelocidadeMotorEsquerda, velocidadeInicialEsquerda);
 				delay(1000); // verificar quanto tempo o robo deve andar para reencontrar a linha
 				break; // Volta para o inicio do laco
 			}
-			if (fimPercurso()) {
+			if (vetorSensores[0] == HIGH && vetorSensores[1] == HIGH && vetorSensores[2] == HIGH) {
+        paraRobo();
+        delay(1000);
 				// Robo chegou ao fim do percurso
 				modo = FIM;
 				break;
 			}
 			analisaSensores(); // Analisa os dados dos sensores para saber se o robo esta na linha
-			while (distancia <= 15) {
-				paraRobo();
-				delay(1000);
-				leSensores();
-				if (distancia > 15) {
-					break;
-				}
-			}
-			calcularPID(); // Faz o calculo do PID para controlar os motores
+//			while (distancia <= 15) {
+//				paraRobo();
+//				delay(1000);
+//				leSensores();
+//				if (distancia > 15) {
+//					break;
+//				}
+//			}
+			//calcularPID(); // Faz o calculo do PID para controlar os motores
 			controlePID(); // A partir do calculo PID, ajusta os motores
 		case FIM:
 			while (digitalRead(pinoCubo) == HIGH) { // Verificar se a chave ativada gera LOW ou HIGH
@@ -77,8 +85,8 @@ void loop() {
 			if (digitalRead(pinoCubo) == LOW) {
 				// Quando o robo está sem o cubo, pode seguir em frente
 				modo = PERCURSO;
-				controlaMotor(motorDireita, velocidadeInicialDireita, HORARIO);
-				controlaMotor(motorEsquerda, velocidadeInicialEsquerda, HORARIO);
+				analogWrite(pinoVelocidadeMotorDireita, velocidadeInicialDireita);
+        analogWrite(pinoVelocidadeMotorEsquerda, velocidadeInicialEsquerda);
 				delay(1000); // Tempo para o robo sair da linha horizontal
 			}
       break;
@@ -92,18 +100,6 @@ void paraRobo() {
 	digitalWrite(pino2MotorEsquerda, HIGH);
 }
 
-void controlaMotor(int motor, int velocidade, bool sentido) {
-	if (motor == motorDireita) {
-		digitalWrite(pino1MotorDireita, sentido);
-		digitalWrite(pino2MotorDireita, !sentido);
-		analogWrite(pinoVelocidadeMotorDireita, velocidade);
-	} else if (motor == motorEsquerda) {
-		digitalWrite(pino1MotorEsquerda, sentido);
-		digitalWrite(pino2MotorEsquerda, !sentido);
-		analogWrite(pinoVelocidadeMotorEsquerda, velocidade);
-	}
-}
-
 void leSensores() {
 	// Aqui sera feita a leitura dos dados de cada sensor, e armazenar os mesmos nas variaveis globais
 
@@ -111,9 +107,6 @@ void leSensores() {
 	vetorSensores[0] = digitalRead(pinoSensorLinha1);
 	vetorSensores[1] = digitalRead(pinoSensorLinha2);
 	vetorSensores[2] = digitalRead(pinoSensorLinha3);
-
-	// Leitura do cubo
-	flagFimDeCurso = digitalRead(pinoFimDeCurso);
 
 	// Transmitindo o sinal do trigger, ligando-o
 	digitalWrite(trigger, HIGH);
@@ -125,20 +118,7 @@ void leSensores() {
 	tempo = pulseIn(echo, HIGH);
 	// Formula para calcular a distancia (em cm)
 	distancia = (tempo * 0.034) / 2;
-}
-
-bool fimPercurso() {
-	if (vetorSensores[0] == HIGH && vetorSensores[1] == HIGH && vetorSensores[2] == HIGH) {
-		// Robo chegou ao final do percurso, precisa devolver o cubo
-		return true;
-	}
-}
-
-bool semLinha() {
-	if (vetorSensores[0] == LOW && vetorSensores[1] == LOW && vetorSensores[2] == LOW) {
-		// Robo nao identificou a linha, pode ser uma interrupção
-		return true;
-	}
+  delay(300);
 }
 
 void analisaSensores() {
@@ -161,13 +141,28 @@ void calcularPID() {
 	D = erro - erroAnterior;
 	valorPID = (Kp * P) + (Ki * I) + (Kd * D);
 	erroAnterior = erro;
+  if (erro > 0) {
+    velocidadeMotorDireita = velocidadeMotorDireita + valorPID;
+    velocidadeMotorEsquerda = velocidadeMotorEsquerda - valorPID;
+  } else if (erro < 0) {
+    velocidadeMotorDireita = velocidadeMotorDireita - valorPID;
+    velocidadeMotorEsquerda = velocidadeMotorEsquerda + valorPID;
+  }
 }
 
 void controlePID() {
 	// Planejar como sera feito o controle da velocidade em cima do PID
 	// Um motor sempre será o inverso do outro.
 	// Ex: um com 100, outro com 155 (a soma deve ser 255, o maximo da saida PWM)
-	// Porcentagem talvez?
-	controlaMotor(motorDireita, velocidadeMotorDireita, HORARIO);
-	controlaMotor(motorEsquerda, velocidadeMotorEsquerda, HORARIO);
+	// Porcentagem talvez?]
+  if (erro < 0) {
+    analogWrite(pinoVelocidadeMotorEsquerda, 200);
+    analogWrite(pinoVelocidadeMotorDireita, 150);
+  } else if (erro > 0) {
+    analogWrite(pinoVelocidadeMotorEsquerda, 150);
+    analogWrite(pinoVelocidadeMotorDireita, 200);
+  } else {
+    analogWrite(pinoVelocidadeMotorEsquerda, 150);
+    analogWrite(pinoVelocidadeMotorDireita, 150);
+  }
 }

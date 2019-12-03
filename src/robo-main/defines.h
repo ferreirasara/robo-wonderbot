@@ -4,49 +4,41 @@
 
 // Declaracao dos pinos que serao usados para os motores
 // Serao usados tres pinos para cada motor
-#define pino1MotorEsquerda 46
-#define pino2MotorEsquerda 48
-#define pinoVelocidadeMotorEsquerda 2
-#define pino1MotorDireita 50
-#define pino2MotorDireita 52
-#define pinoVelocidadeMotorDireita 3
-
-// Declaracao das constantes para diferenciar os motores
-#define motorEsquerda 1
-#define motorDireita 2
+#define pino1MotorEsquerda 50
+#define pino2MotorEsquerda 52
+#define pinoVelocidadeMotorEsquerda 3
+#define pino1MotorDireita 46
+#define pino2MotorDireita 48
+#define pinoVelocidadeMotorDireita 2
 
 // Declaracao das velocidades iniciais dos motores
 // Verificar qual e a velocidade ideal
-#define velocidadeInicialEsquerda 80
-#define velocidadeInicialDireita 80
-
-// Declaracao das constantes para os sentidos do motor
-#define HORARIO true
-#define ANTIHORARIO false
+#define velocidadeInicialEsquerda 60
+#define velocidadeInicialDireita 60
 
 // Declaracao dos pinos que serao utlizados para os sensores de linha
 // Verificar a possibilidade de utilizar mais sensores, para ter mais 
-#define pinoSensorLinha1 40
-#define pinoSensorLinha2 32
-#define pinoSensorLinha3 26
+#define pinoSensorLinha1 47
+#define pinoSensorLinha2 49
+#define pinoSensorLinha3 51
 
 // Declaracao do pino utilizado para verificar o cubo
-#define pinoCubo
+#define pinoCubo 9
 
 // Declaracao dos pinos utilizados para o sensor ultrassonico
-#define trigger
-#define echo
+#define trigger 6
+#define echo 7
 
 // Declaracao dos modos de operacao
 #define INICIO		0
 #define PERCURSO 	1
-#define FIM 		2
+#define FIM 		  2
 
 // Declaracao das constantes que serao utilizadas no controle PID
 // Verificar os valores ideais para o funcionamento correto do robo
-#define Kp
-#define Ki
-#define Kd
+#define Kp 5
+#define Ki 5
+#define Kd 5
 
 // --------------------------------------------------
 // DECLARACAO DAS VARIAVEIS
@@ -55,24 +47,17 @@
 // Declaracao do vetor para armazenar as entradas dos sensores de linha
 int* vetorSensores[3];
 
-// Declaracao da variavel utilizada para controlar os sensores de linha
-// Obs: 0 -> sensor do meio na linha. Nao precisa virar
-//      1 -> primeiro sensor na linha. Virar para a esquerda
-//      2 -> terceiro sensor na linha. Virar para a direita
-//      3 -> nenhum sensor na linha. Reencontrar a linha
-int erroSensorLinha;
-
 // Declaracao da variavel para controlar o modo de operacao
 // Inicializa o robo no modo de inicio, para nao gerar confusao
-int modo = INICIO;
+int modo = PERCURSO;
 
 // Declaracao das variaveis utilizadas para controle PID
-double valorPID = 0;
-double erro = 0;
-double erroAnterior = 0;
-double P = 0;
-double I = 0;
-double D = 0;
+float valorPID = 0;
+float erro = 0;
+float erroAnterior = 0;
+float P = 0;
+float I = 0;
+float D = 0;
 
 // Declaracao das variaveis de controle de velocidade do robo
 int velocidadeMotorEsquerda;
