@@ -14,7 +14,7 @@ void setup() {
 	pinMode(pinoSensorLinha2, INPUT);
 	pinMode(pinoSensorLinha3, INPUT);
 
-	// Inicializacao do fim de curso
+	// Inicializacao do cubo
 	pinMode(pinoCubo, INPUT);
 
 	// Definindo o pino "trigger" como saída
@@ -23,81 +23,88 @@ void setup() {
 	pinMode(echo, INPUT);
 	// "Limpar" o pino trigger
 	digitalWrite(trigger, LOW);
-
-  digitalWrite(pino1MotorDireita, HIGH);
-  digitalWrite(pino2MotorDireita, LOW);
-  digitalWrite(pino1MotorEsquerda, HIGH);
-  digitalWrite(pino2MotorEsquerda, LOW);
 }
 
 void loop() {
 	// Gera uma interrupcao no processador, para ler os dados dos sensores
 	leSensores();
+	delay(10);
 	// Verifica o modo de operacao
 	switch (modo) {
 		case INICIO:
-			while (digitalRead(pinoCubo) == LOW) { // Verificar se a chave ativada gera LOW ou HIGH
+			if (cubo == LOW) { // Verificar se a chave ativada gera LOW ou HIGH
 				// Enquanto o robo nao recebe o cubo, fica parado esperando
 				paraRobo();
 				delay(500);
-			}
-			if (digitalRead(pinoCubo) == HIGH) {
+			} else {
 				// Quando o robo está com o cubo, pode seguir em frente
 				modo = PERCURSO;
-        analogWrite(pinoVelocidadeMotorDireita, velocidadeInicialDireita);
-        analogWrite(pinoVelocidadeMotorEsquerda, velocidadeInicialEsquerda);
-				delay(1000); // Tempo para o robo sair da linha horizontal
+				movimentaRobo();
 			}
+			break;
 		case PERCURSO:
-      // Gera uma interrupcao no processador, para ler os dados dos sensores
-      leSensores();
+			// Verifica a ausencia da linha
 			if (vetorSensores[0] == LOW && vetorSensores[1] == LOW && vetorSensores[2] == LOW) {
 				// Seta os dois motores com a velocidade inicial,
 				// para garantir que o mesmo vai seguir em linha reta
-				analogWrite(pinoVelocidadeMotorDireita, velocidadeInicialDireita);
-        analogWrite(pinoVelocidadeMotorEsquerda, velocidadeInicialEsquerda);
-				delay(1000); // verificar quanto tempo o robo deve andar para reencontrar a linha
-				break; // Volta para o inicio do laco
+				movimentaRobo();
+				delay(10);
+				break;
 			}
+			// Verifica se os tres sensores estão apontando para a linha (fim do percurso)
 			if (vetorSensores[0] == HIGH && vetorSensores[1] == HIGH && vetorSensores[2] == HIGH) {
-        paraRobo();
-        delay(1000);
+				paraRobo();
+				delay(10);
 				// Robo chegou ao fim do percurso
 				modo = FIM;
 				break;
 			}
 			analisaSensores(); // Analisa os dados dos sensores para saber se o robo esta na linha
-//			while (distancia <= 15) {
-//				paraRobo();
-//				delay(1000);
-//				leSensores();
-//				if (distancia > 15) {
-//					break;
-//				}
-//			}
-			//calcularPID(); // Faz o calculo do PID para controlar os motores
+			while (distancia <= 15) {
+				paraRobo();
+				delay(10);
+				leSensores();
+				if (distancia > 15) {
+					movimentaRobo();
+					break;
+				}
+			}
+			calcularPID(); // Faz o calculo do PID para controlar os motores
 			controlePID(); // A partir do calculo PID, ajusta os motores
+			break;
 		case FIM:
-			while (digitalRead(pinoCubo) == HIGH) { // Verificar se a chave ativada gera LOW ou HIGH
+			if (cubo == HIGH) { // Verificar se a chave ativada gera LOW ou HIGH
 				// Enquanto o robo ainda esta com o cubo, fica parado esperando
 				paraRobo();
-			}
-			if (digitalRead(pinoCubo) == LOW) {
-				// Quando o robo está sem o cubo, pode seguir em frente
+				delay(500);
+			} else {
+				// Quando o robo está com o cubo, pode seguir em frente
 				modo = PERCURSO;
-				analogWrite(pinoVelocidadeMotorDireita, velocidadeInicialDireita);
-        analogWrite(pinoVelocidadeMotorEsquerda, velocidadeInicialEsquerda);
-				delay(1000); // Tempo para o robo sair da linha horizontal
+				movimentaRobo();
+				delay(10);
 			}
-      break;
+    		break;
 	}
 }
 
 void paraRobo() {
+	// Ao setar todos os pinos em HIGH, os motores ficam parados
 	digitalWrite(pino1MotorDireita, HIGH);
 	digitalWrite(pino2MotorDireita, HIGH);
 	digitalWrite(pino1MotorEsquerda, HIGH);
 	digitalWrite(pino2MotorEsquerda, HIGH);
+}
+
+void movimentaRobo() {
+	digitalWrite(pino1MotorDireita, HIGH);
+	digitalWrite(pino2MotorDireita, LOW);
+	digitalWrite(pino1MotorEsquerda, HIGH);
+	digitalWrite(pino2MotorEsquerda, LOW);
+	// Ajusta a velocidade para voltar a velocidade inicial
+	analogWrite(pinoVelocidadeMotorDireita, velocidadeInicialDireita);
+	delay(10);
+	analogWrite(pinoVelocidadeMotorEsquerda, velocidadeInicialEsquerda);
+	delay(10);
 }
 
 void leSensores() {
@@ -107,7 +114,10 @@ void leSensores() {
 	vetorSensores[0] = digitalRead(pinoSensorLinha1);
 	vetorSensores[1] = digitalRead(pinoSensorLinha2);
 	vetorSensores[2] = digitalRead(pinoSensorLinha3);
+	delay(10);
 
+	cubo = digitalRead(pinoCubo);
+	delay(10);
 	// Transmitindo o sinal do trigger, ligando-o
 	digitalWrite(trigger, HIGH);
 	// Tempo de transmissão de sinal (trigger ligado)
@@ -118,7 +128,6 @@ void leSensores() {
 	tempo = pulseIn(echo, HIGH);
 	// Formula para calcular a distancia (em cm)
 	distancia = (tempo * 0.034) / 2;
-  delay(300);
 }
 
 void analisaSensores() {
@@ -141,28 +150,27 @@ void calcularPID() {
 	D = erro - erroAnterior;
 	valorPID = (Kp * P) + (Ki * I) + (Kd * D);
 	erroAnterior = erro;
-  if (erro > 0) {
-    velocidadeMotorDireita = velocidadeMotorDireita + valorPID;
-    velocidadeMotorEsquerda = velocidadeMotorEsquerda - valorPID;
-  } else if (erro < 0) {
-    velocidadeMotorDireita = velocidadeMotorDireita - valorPID;
-    velocidadeMotorEsquerda = velocidadeMotorEsquerda + valorPID;
-  }
+	float porcentagem = 
+	if (erro > 0) {
+		velocidadeMotorDireita = valorPID;
+		velocidadeMotorEsquerda = ;
+	} else if (erro < 0) {
+		velocidadeMotorDireita = ;
+		velocidadeMotorEsquerda = ;
+	}
 }
 
 void controlePID() {
-	// Planejar como sera feito o controle da velocidade em cima do PID
 	// Um motor sempre será o inverso do outro.
 	// Ex: um com 100, outro com 155 (a soma deve ser 255, o maximo da saida PWM)
-	// Porcentagem talvez?]
-  if (erro < 0) {
-    analogWrite(pinoVelocidadeMotorEsquerda, 200);
-    analogWrite(pinoVelocidadeMotorDireita, 150);
-  } else if (erro > 0) {
-    analogWrite(pinoVelocidadeMotorEsquerda, 150);
-    analogWrite(pinoVelocidadeMotorDireita, 200);
-  } else {
-    analogWrite(pinoVelocidadeMotorEsquerda, 150);
-    analogWrite(pinoVelocidadeMotorDireita, 150);
-  }
+	if (erro < 0) {
+		analogWrite(pinoVelocidadeMotorEsquerda, 200);
+		analogWrite(pinoVelocidadeMotorDireita, 150);
+	} else if (erro > 0) {
+		analogWrite(pinoVelocidadeMotorEsquerda, 150);
+		analogWrite(pinoVelocidadeMotorDireita, 200);
+	} else {
+		analogWrite(pinoVelocidadeMotorEsquerda, 150);
+		analogWrite(pinoVelocidadeMotorDireita, 150);
+	}
 }

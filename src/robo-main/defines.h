@@ -46,6 +46,8 @@
 
 // Declaracao do vetor para armazenar as entradas dos sensores de linha
 int* vetorSensores[3];
+// Declaracao da variavel do sensor do cubo
+int cubo;
 
 // Declaracao da variavel para controlar o modo de operacao
 // Inicializa o robo no modo de inicio, para nao gerar confusao
